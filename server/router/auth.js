@@ -1,13 +1,21 @@
 const express = require('express');
 const router = express.Router();
 
+const app = express();
+app.use(express.json());
+
+
 const requireLogin = require('../middleware/requireLogin')
-const { Login,Register}   = require('../controllers/auth');
+const { LoginPage, Login, RegisterPage, Register }   = require('../controllers/auth');
 
 
 
-router.get('/login', Login);
-router.get('/Register', Register);
+router.get('/login', LoginPage).post('/login', Login);
+router.get('/', (req,res) => {
+res.send('post succeed')
+})
+
+router.get('/register', RegisterPage).post('/register', Register)
 
 
 
