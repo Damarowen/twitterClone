@@ -1,0 +1,43 @@
+<%- include ('./partials/header')  %>
+
+        <div class="row">
+            <nav class="col-2">
+                <a href="" class="blue"><i class="fas fa-dove"></i></a>
+                <a href=""><i class="fas fa-home"></i></a>
+                <a href=""><i class="fas fa-search"></i></a>
+                <a href=""><i class="fas fa-bell"></i></a>
+                <a href=""><i class="fas fa-envelope"></i></a>
+                <a href=""><i class="fas fa-user"></i></a>
+                <a href="/logout"><i class="fas fa-sign-out-alt"></i></a>
+
+            </nav>
+            <div class="mainSection col-10 col-md-8 col-lg-6">
+                <div class="titleContainer">
+                    <h1>Home</h1>
+                </div>
+                <h1><%= userLoggedIn %> </h1>
+                <div class="postFormContainer">
+                    <form action="">
+                        <div class="userImage">
+                            <img src="<%=userImage%>" alt="User's profile picture">
+                        </div>
+                        <div class="textArea">
+                            <textarea  placeholder="What Happening >"></textarea>
+                        </div>
+                        <div class="buttonsContainer">
+                            <button type="submit" id="submitPostButton">Submit</button>
+                        </div>
+                    </form>
+                </div>
+       
+            </div>
+
+     
+            <div class="d-none d-md-block col-md-2 col-lg-4">
+                <span>Third Column</span>
+            </div>
+        </div>
+  
+
+    
+<%- include ('./partials/footer')  %>

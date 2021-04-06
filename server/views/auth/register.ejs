@@ -24,19 +24,4 @@
     </div>
    
 
-
-    <script>
-      const form = document.getElementById('formRegister')
-      const password = document.getElementById('password')
-      const confirm = document.getElementById('confirmpassword')
-
-      const validatePassword = () => {
-        event.preventDefault()
-        if(password.value !== confirm.value) {
-          alert('Pass Not Same')
-        } else {
-          form.submit()
-        }
-      }
-    </script>
 <%- include ('../partials/footer')  %>
