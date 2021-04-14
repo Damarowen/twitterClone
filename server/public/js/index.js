@@ -20,15 +20,13 @@ button.addEventListener('click', async (e) => {
 
     e.preventDefault()
 
-    let data = textArea.value
 
     const query = await axios.post('/posting', {
-        textArea: data
+        textArea: textArea.value
     })
-
-    const date = query.data.rows[0].datetime
-    console.log(date)
-    let html = await createPostHtml(data, date);
+    const data = query.data.rows[0]
+    
+    let html = await createPostHtml(data);
     postContainer.insertAdjacentHTML('afterbegin', html);
 
     textArea.value = ''
@@ -37,18 +35,18 @@ button.addEventListener('click', async (e) => {
 })
 
 
+
 //* function to passing html when user click post button
-const createPostHtml = async (post, date) => {
+const createPostHtml = async (post) => {
     const profile = await axios.get('/session')
         .then(function (response) {
             return response
         })
 
     // var timestamp = moment(date).endOf('day').fromNow();
-    var timestamp = timeDifference(new Date(), new Date(date))
+    var timestamp = timeDifference(new Date(), new Date(post.datetime))
 
-
-    let body = `<div class='post'>
+    let body = `<div class='post' data-id=${post.status_id}>
 
   <div class='mainContentContainer'>
       <div class='userImage'>
@@ -60,7 +58,7 @@ const createPostHtml = async (post, date) => {
           <span class="date">${timestamp}</span>
           </div>
           <div class='postBody'>
-              <span>${post}</span>
+              <span>${post.text}</span>
           </div>
           <div class='postFooter'>
           <div class='postButtonContainer'>
@@ -73,8 +71,8 @@ const createPostHtml = async (post, date) => {
                   <i class='fas fa-retweet'></i>
               </button>
           </div>
-          <div class='postButtonContainer'>
-              <button>
+          <div class='postButtonContainer' >
+              <button onclick='likeButton(this)'>
                   <i class='far fa-heart'></i>
               </button>
           </div>
@@ -116,3 +114,4 @@ function timeDifference(current, previous) {
         return Math.round(elapsed / msPerYear) + ' years ago';
     }
 }
+
