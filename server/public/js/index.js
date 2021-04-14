@@ -1,5 +1,5 @@
 const textArea = document.getElementById('domTextArea')
-const button = document.getElementById('submitPostButton')
+const POSTbutton = document.getElementById('submitPostButton')
 const postContainer = document.getElementById('postContainer')
 const div = document.createElement('div')
 
@@ -7,16 +7,16 @@ const div = document.createElement('div')
 textArea.addEventListener('keyup', (e) => {
     const val = e.target.value
     if (val.length > 0) {
-        button.disabled = false;
+        POSTbutton.disabled = false;
         return
     }
-    button.disabled = true;
+    POSTbutton.disabled = true;
 
 })
 
 //* event listener for button click
 
-button.addEventListener('click', async (e) => {
+POSTbutton.addEventListener('click', async (e) => {
 
     e.preventDefault()
 
@@ -30,7 +30,7 @@ button.addEventListener('click', async (e) => {
     postContainer.insertAdjacentHTML('afterbegin', html);
 
     textArea.value = ''
-    button.disabled = true;
+    POSTbutton.disabled = true;
 
 })
 
