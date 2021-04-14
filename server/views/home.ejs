@@ -17,17 +17,20 @@
                 </div>
                 <h1><%= userLoggedIn %> </h1>
                 <div class="postFormContainer">
-                    <form action="">
-                        <div class="userImage">
-                            <img src="<%=userImage%>" alt="User's profile picture">
-                        </div>
-                        <div class="textArea">
-                            <textarea  placeholder="What Happening >"></textarea>
+                    <form>
+                        <div class="postBody">
+                            <div class="userImage">
+                                <img src="<%=userImage%>" alt="User's profile picture">
+                            </div>
+                                <textarea id="domTextArea" cols="50" placeholder="What Happening" name="textArea"></textarea>
                         </div>
                         <div class="buttonsContainer">
-                            <button type="submit" id="submitPostButton">Submit</button>
+                            <button type="submit" id="submitPostButton">Post</button>
                         </div>
                     </form>
+                </div>
+                <div id="postContainer">
+               
                 </div>
        
             </div>
@@ -38,6 +41,6 @@
             </div>
         </div>
   
-
-    
+        <script src="/js/home.js"></script>
+ 
 <%- include ('./partials/footer')  %>

@@ -1,29 +1,37 @@
 const express = require('express');
 const router = express.Router();
 
-const app = express();
-app.use(express.json());
-
 
 const requireLogin = require('../middleware/requireLogin')
-const { LoginPage, Login, RegisterPage, Register, Logout}   = require('../controllers/auth');
 
-router.get("/", requireLogin, (req, res) => {
+const {
+  Home, Session, Posting, SeePosting
+} = require('../controllers/home');
 
-    var payload = {
-        pageTitle: "Home",
-        userLoggedIn: req.session.user.username,
-        userImage: req.session.user.profilepic,
-        userLoggedInJs: JSON.stringify(req.session.user),
-    }
+const {
+  LoginPage,
+  Login,
+  RegisterPage,
+  Register,
+  Logout
+} = require('../controllers/auth');
 
-    res.status(200).render("home", payload);
+router.get("/", (req,res) => {
+  return res.redirect('/home')
 })
+
+router.get("/home", requireLogin, Home)
+router.get('/session', Session)
+router.get('/see_posting', SeePosting)
+router.post('/posting', Posting )
 
 
 router.get('/login', LoginPage).post('/login', Login);
 router.get('/register', RegisterPage).post('/register', Register)
 router.get('/logout', Logout)
+
+
+
 
 
 

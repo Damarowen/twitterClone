@@ -17,9 +17,15 @@ html, body {
     height: 100%;
     min-height: 100%;
     background-color: #fff;
-    font-weight: 300;
+    /* font-weight: 300; */
 }
 
+
+button {
+    background-color: transparent;
+    border: none;
+    color: var(--greyButtonText);
+}
 
 .wrapper {
     display: flex;
@@ -34,6 +40,65 @@ html, body {
     display: flex;
     flex-direction: column;
 }
+
+.header a:hover {
+    text-decoration: underline;
+}
+
+.header a,
+.header span {
+    padding-right: 5px;
+}
+
+.postButtonContainer button:hover {
+    background-color: #d4edff;
+    color: var(--blue);
+    border-radius: 50%;
+}
+
+
+.mainContentContainer {
+    flex: 1;
+    display: flex;
+    overflow-y: hidden;
+}
+
+
+.postContentContainer {
+    padding-left: var(--spacing);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.post.largeFont .postBody,
+.post.largeFont .postFooter {
+    font-size: 23px;
+}
+
+.post {
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing);
+    cursor: pointer;
+    border-bottom: 1px solid var(--lightGrey);
+    flex-shrink: 0;
+}
+
+.postFooter {
+    display: flex;
+    align-items: center;
+}
+
+.postFooter .postButtonContainer {
+    flex: 1;
+    display: flex;
+}
+
+.postFooter .postButtonContainer button {
+    padding: 2px 5px;
+}
+
 
 .titleContainer {
     height: 53px;
@@ -63,11 +128,10 @@ html, body {
     -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 
-form {
+.postBody {
     display: flex;
-    flex-direction: column;
-}
 
+}
 .postFormContainer {
     display: flex;
     padding: var(--spacing);
@@ -75,9 +139,13 @@ form {
     flex-shrink: 0;
 }
 
+.displayName {
+    font-weight: bold;
+}
+
 .userImage {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
 }
 
 .userImage img {
@@ -86,16 +154,19 @@ form {
     background-color: white;
 }
 
-.textArea {
-    flex: 1;
-    padding-left: var(--spacing);
-}
 
-.textArea textarea {
+textarea {
     width: 100%;
     border: none;
     resize: none;
     font-size: 19px;
+    margin-left: 20px;
+
+}
+
+textarea:focus {
+    outline: none !important;
+    border:1px solid var(--blue);
 }
 
 #submitPostButton {

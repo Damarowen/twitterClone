@@ -8,6 +8,11 @@ class Message {
   }
 }
 
+
+//**RENDER NEW KOST
+//** @route  /kost/new
+//** @access  Private
+
 const LoginPage = async (req, res) => {
   try {
     let message = new Message('')
