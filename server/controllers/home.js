@@ -7,7 +7,6 @@ const Home = async (req, res) => {
       pageTitle: "Home",
       userLoggedIn: req.session.user.username,
       userImage: req.session.user.profilepic,
-      userLoggedInJs: JSON.stringify(req.session.user),
     }
 
     res.status(200).render("home", payload);
@@ -66,11 +65,9 @@ const Likes = async (req, res) => {
     let postId = req.params.id;
     let userId = req.session.user.id
 
-    let query = await pool.query(
-      `SELECT likes FROM users WHERE id = $1`, [userId])
 
-
-    //* if user already liked
+    //* check if user already liked
+    let query = await pool.query( `SELECT likes FROM users WHERE id = $1`, [userId])
     const isLiked = query.rows[0].likes.includes(parseInt(postId))
 
     
@@ -83,6 +80,11 @@ const Likes = async (req, res) => {
       await pool.query(
         `UPDATE users SET likes = array_remove(likes, '${postId}') WHERE id = '${userId}'`
       )
+      query = await pool.query( `SELECT likes FROM status WHERE status_id = $1`, [postId])
+
+      let chunk = [query,userId]
+      res.status(200).send(chunk)
+
       console.log('success pull likes')
     } else {
       //* add like
@@ -93,11 +95,14 @@ const Likes = async (req, res) => {
       await pool.query(
         `UPDATE users SET likes = array_append(likes, '${postId}') WHERE id = '${userId}'`
       )
+
+      query = await pool.query( `SELECT likes FROM status WHERE status_id = $1`, [postId])
+      let chunk = [query,userId]
+      res.status(200).send(chunk)
       console.log('success add likes')
 
     }
 
-    res.status(200).send(query)
   } catch (err) {
     console.error(err)
   }

@@ -57,6 +57,10 @@ button {
 }
 
 
+.postButtonContainer button.active {
+    color: var(--red);
+}
+
 .mainContentContainer {
     flex: 1;
     display: flex;

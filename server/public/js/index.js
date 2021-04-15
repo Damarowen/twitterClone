@@ -43,7 +43,9 @@ const createPostHtml = async (post) => {
             return response
         })
     // var timestamp = moment(date).endOf('day').fromNow();
-    var timestamp = timeDifference(new Date(), new Date(post.datetime))
+    let timestamp = timeDifference(new Date(), new Date(post.datetime))
+
+    let likeButtonActiveClass = post.likes.includes(profile.data.id) ? "active" : "";
 
     let body = `<div class='post' data-id=${post.status_id}>
 
@@ -65,15 +67,15 @@ const createPostHtml = async (post) => {
                   <i class='far fa-comment'></i>
               </button>
           </div>
-          <div class='postButtonContainer'>
-              <button>
+          <div class='postButtonContainer green'>
+              <button class="retweet">
                   <i class='fas fa-retweet'></i>
               </button>
           </div>
           <div class='postButtonContainer' >
-              <button onclick='likeButton(this)'>
+              <button class="${likeButtonActiveClass}" onclick='likeButton(this)'>
                   <i class='far fa-heart'></i>
-                  <span id='likeSpan'>${post.likes}</span>
+                  <span class='likeSpan'>${post.likes.length > 0 ? post.likes.length :''}</span>
               </button>
           </div>
           </div>
