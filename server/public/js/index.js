@@ -42,7 +42,6 @@ const createPostHtml = async (post) => {
         .then(function (response) {
             return response
         })
-
     // var timestamp = moment(date).endOf('day').fromNow();
     var timestamp = timeDifference(new Date(), new Date(post.datetime))
 
@@ -74,6 +73,7 @@ const createPostHtml = async (post) => {
           <div class='postButtonContainer' >
               <button onclick='likeButton(this)'>
                   <i class='far fa-heart'></i>
+                  <span id='likeSpan'>${post.likes}</span>
               </button>
           </div>
           </div>

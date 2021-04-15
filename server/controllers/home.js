@@ -97,7 +97,7 @@ const Likes = async (req, res) => {
 
     }
 
-    res.status(200).send("Like Sent")
+    res.status(200).send(query)
   } catch (err) {
     console.error(err)
   }
