@@ -49,7 +49,7 @@ const SeePosting = async (req, res) => {
     const data = req.session.user.id
 
     let allPosting = await pool.query(
-      " SELECT * FROM status WHERE user_id = $1", [data]
+      " SELECT * FROM status WHERE user_id = $1 ORDER BY datetime", [data]
     );
     res.send(allPosting)
   } catch (error) {
