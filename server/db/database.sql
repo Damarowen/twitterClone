@@ -12,7 +12,6 @@ CREATE TABLE users(
     profilepic VARCHAR(255) DEFAULT '/img/default.jpg',
     likes int [],
     datetime timestamp NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (likes) REFERENCES status(id)
 )
 
 CREATE TABLE status( 
@@ -34,4 +33,11 @@ ALTER TABLE users
   REFERENCES status(status_id)
 
 INSERT INTO users (username, email, password ) VALUES ('Owen', 'tes@gmail.com', 'pass')
-INSERT INTO status (user_id, username, text) values ('b429c2ce-0e53-49f0-9669-eb8951ce3ff0', 'Owen', 'clean room');
+INSERT INTO status (user_id,  text) values ('b429c2ce-0e53-49f0-9669-eb8951ce3ff0', 'clean room')
+
+
+UPDATE status SET likes = array_append(likes, 'b429c2ce-0e53-49f0-9669-eb8951ce3ff0') WHERE status_id = '1'
+UPDATE status SET likes = array_remove(likes, 'b429c2ce-0e53-49f0-9669-eb8951ce3ff0') WHERE status_id = '1'
+
+UPDATE users SET likes = array_append(likes, '2') WHERE id = 'b429c2ce-0e53-49f0-9669-eb8951ce3ff0'
+UPDATE users SET likes = array_remove(likes, '2') WHERE id = '71d4061e-dd87-4f80-98d4-cdef8ece3e30'

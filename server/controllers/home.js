@@ -65,35 +65,38 @@ const Likes = async (req, res) => {
   try {
     let postId = req.params.id;
     let userId = req.session.user.id
-    const key = req.session.user.likes ? Object.values(req.session.user.likes) : req.session.user.likes
-    
-    let isLiked = req.session.user.likes && key.includes(Math.floor(postId))
+
+    let query = await pool.query(
+      `SELECT likes FROM users WHERE id = $1`, [userId])
+
 
     //* if user already liked
+    const isLiked = query.rows[0].likes.includes(parseInt(postId))
 
-    // console.log('isLiked', postId)
+    
+    if (isLiked) {
+      //* pull like
+      await pool.query(
+        `UPDATE status SET likes = array_remove(likes, '${userId}') WHERE status_id = ${postId}`
+      )
 
-    // // //* add like
-    // await pool.query(
-    //   `UPDATE status SET likes = array_cat(likes, '{${userId}}') WHERE status_id = ${postId}`
-    // )
+      await pool.query(
+        `UPDATE users SET likes = array_remove(likes, '${postId}') WHERE id = '${userId}'`
+      )
+      console.log('success pull likes')
+    } else {
+      //* add like
+      await pool.query(
+        `UPDATE status SET likes = array_append(likes, '${userId}') WHERE status_id = ${postId}`
+      )
 
-    await pool.query(
-      `UPDATE users SET likes = array_cat(likes, '{${postId}}') WHERE id = '${userId}'`
-    )
+      await pool.query(
+        `UPDATE users SET likes = array_append(likes, '${postId}') WHERE id = '${userId}'`
+      )
+      console.log('success add likes')
 
-    // if (isLiked) {
-    //   //* pull like
-    //   await pool.query(
-    //     `UPDATE status SET likes = array_remove(likes, '${userId}')`
-    //   )
+    }
 
-    //   await pool.query(
-    //     `UPDATE users SET likes = array_remove(likes, '${postId}')`
-    //   )
-    // }
-
-    console.log('isLiked', isLiked)
     res.status(200).send("Like Sent")
   } catch (err) {
     console.error(err)
