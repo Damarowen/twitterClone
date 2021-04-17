@@ -3,7 +3,11 @@
     <div class="wrapper">
         <div class="loginContainer">
             <h1>Login</h1>
-            <%= message %> 
+            <% if(typeof message == 'string')  {%>  
+               <%= message %>  
+              <% } else { %> 
+                <% message = '' %>  
+                <% }  %> 
             <form method="POST" action="/login">
                 <div class="form-group">
                   <input type="text" class="form-control my-2" id="username" placeholder="Email" name="email" required>

@@ -1,5 +1,9 @@
 const pool = require('../db/config');
 
+
+//**GET HOMEPAGE
+//** @route  /home
+//** @access  private
 const Home = async (req, res) => {
   try {
 
@@ -16,7 +20,9 @@ const Home = async (req, res) => {
   }
 }
 
-
+//**GET SESSION
+//** @route  /Session
+//** @access  private
 const Session = async (req, res) => {
   try {
     const user = req.session.user
@@ -26,6 +32,13 @@ const Session = async (req, res) => {
   }
 }
 
+
+
+
+//**POST POSTING
+//** @route  /posting
+//** @access  private
+
 const Posting = async (req, res) => {
 
   try {
@@ -34,8 +47,8 @@ const Posting = async (req, res) => {
     } = req.body
 
     let posting = await pool.query(
-      "INSERT INTO status (user_id,  text) VALUES ($1, $2) RETURNING *",
-      [req.session.user.id, textArea]
+      "INSERT INTO status (user_id,  username, text) VALUES ($1, $2,$3) RETURNING *",
+      [req.session.user.id, req.session.user.username, textArea]
     );
     res.send(posting)
   } catch (error) {
@@ -43,13 +56,17 @@ const Posting = async (req, res) => {
   }
 }
 
+
+//**GET POSTING
+//** @route  /see_posting
+//** @access  private
 const SeePosting = async (req, res) => {
 
   try {
     const data = req.session.user.id
 
     let allPosting = await pool.query(
-      " SELECT * FROM status WHERE user_id = $1 ORDER BY datetime", [data]
+      " SELECT * FROM status ORDER BY datetime"
     );
     res.send(allPosting)
   } catch (error) {
@@ -58,6 +75,10 @@ const SeePosting = async (req, res) => {
 }
 
 
+
+//**PUT LIKE BUTTON
+//** @route  /:ID/LIKE
+//** @access  private
 const Likes = async (req, res) => {
 
 
@@ -67,10 +88,10 @@ const Likes = async (req, res) => {
 
 
     //* check if user already liked
-    let query = await pool.query( `SELECT likes FROM users WHERE id = $1`, [userId])
+    let query = await pool.query(`SELECT likes FROM users WHERE id = $1`, [userId])
     const isLiked = query.rows[0].likes.includes(parseInt(postId))
 
-    
+
     if (isLiked) {
       //* pull like
       await pool.query(
@@ -80,9 +101,10 @@ const Likes = async (req, res) => {
       await pool.query(
         `UPDATE users SET likes = array_remove(likes, '${postId}') WHERE id = '${userId}'`
       )
-      query = await pool.query( `SELECT likes FROM status WHERE status_id = $1`, [postId])
+      query = await pool.query(`SELECT likes FROM status WHERE status_id = $1`, [postId])
 
-      let chunk = [query,userId]
+      let chunk = [query, userId]
+      //* sending to client query and userId
       res.status(200).send(chunk)
 
       console.log('success pull likes')
@@ -96,8 +118,10 @@ const Likes = async (req, res) => {
         `UPDATE users SET likes = array_append(likes, '${postId}') WHERE id = '${userId}'`
       )
 
-      query = await pool.query( `SELECT likes FROM status WHERE status_id = $1`, [postId])
-      let chunk = [query,userId]
+      query = await pool.query(`SELECT likes FROM status WHERE status_id = $1`, [postId])
+      let chunk = [query, userId]
+      //* sending to client query and userId
+
       res.status(200).send(chunk)
       console.log('success add likes')
 
@@ -108,11 +132,69 @@ const Likes = async (req, res) => {
   }
 }
 
+//**POST RETWEET BUTTON
+//** @route  /:ID/RETWEET
+//** @access  private
+const Retweet = async (req, res) => {
+
+
+  try {
+    let postId = req.params.id;
+    let userId = req.session.user.id
+
+    //* check if user already rewteets
+    let query = await pool.query(`SELECT retweets FROM users WHERE id = $1`, [userId])
+    const isRetweet = query.rows[0].retweets.includes(parseInt(postId))
+ 
+
+    if (isRetweet) {
+      //* pull like
+      await pool.query(
+        `UPDATE status SET retweetby = array_remove(retweetby  , '${userId}') WHERE status_id = ${postId}`
+      )
+
+      await pool.query(
+        `UPDATE users SET retweets  = array_remove(retweets   , '${postId}') WHERE id = '${userId}'`
+      )
+      query = await pool.query(`SELECT * FROM status WHERE status_id = $1`, [postId])
+
+      let chunk = [query, userId]
+      //* sending to client query and userId
+      res.status(200).send(chunk)
+
+      console.log('success pull retweet')
+    } else {
+      //* add like
+      await pool.query(
+        `UPDATE status SET retweetby  = array_append(retweetby , '${userId}') WHERE status_id = ${postId}`
+      )
+
+      await pool.query(
+        `UPDATE users SET retweets   = array_append(retweets   , '${postId}') WHERE id = '${userId}'`
+      )
+
+      query = await pool.query(`SELECT * FROM status WHERE status_id = $1`, [postId])
+      let chunk = [query, userId]
+      //* sending to client query and userId
+
+      res.status(200).send(chunk)
+      console.log('success add retweet')
+
+    }
+
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+
+
 
 module.exports = {
   Home,
   Session,
   Posting,
   SeePosting,
-  Likes
+  Likes,
+  Retweet
 }

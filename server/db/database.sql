@@ -11,23 +11,25 @@ CREATE TABLE users(
     password VARCHAR(255) NOT NULL,
     profilepic VARCHAR(255) DEFAULT '/img/default.jpg',
     likes int [] DEFAULT '{}',
+    retweets int [] DEFAULT '{}',
     datetime timestamp NOT NULL DEFAULT NOW()
 )
 
 CREATE TABLE status( 
     status_id SERIAL,
     user_id UUID,
+    username VARCHAR(255),
     pinned BOOL DEFAULT 'false',
     text VARCHAR(255),
     likes text [] DEFAULT '{}',
+    retweetBy text [] DEFAULT '{}',
+    retweetData int [] DEFAULT '{}' , 
     datetime timestamp NOT NULL DEFAULT NOW(),
      PRIMARY KEY (status_id),
      FOREIGN KEY (user_id) REFERENCES users(id),
-    --  FOREIGN KEY (likes) REFERENCES users(id)
+     FOREIGN KEY (username) REFERENCES users(username)
 
 )
-
-
 
 
 INSERT INTO users (username, email, password ) VALUES ('Owen', 'tes@gmail.com', 'pass')

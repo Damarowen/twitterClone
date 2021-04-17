@@ -2,6 +2,7 @@ const textArea = document.getElementById('domTextArea')
 const POSTbutton = document.getElementById('submitPostButton')
 const postContainer = document.getElementById('postContainer')
 const div = document.createElement('div')
+POSTbutton.disabled = true;
 
 //* event listener for button disabled
 textArea.addEventListener('keyup', (e) => {
@@ -10,8 +11,6 @@ textArea.addEventListener('keyup', (e) => {
         POSTbutton.disabled = false;
         return
     }
-    POSTbutton.disabled = true;
-
 })
 
 //* event listener for button click
@@ -25,7 +24,7 @@ POSTbutton.addEventListener('click', async (e) => {
         textArea: textArea.value
     })
     const data = query.data.rows[0]
-    
+
     let html = await createPostHtml(data);
     postContainer.insertAdjacentHTML('afterbegin', html);
 
@@ -38,24 +37,42 @@ POSTbutton.addEventListener('click', async (e) => {
 
 //* function to passing html when user click post button
 const createPostHtml = async (post) => {
+
+
+    // var retweetedBy = isRetweet ? postData.postedBy.username : null;
+    // postData = isRetweet ? postData.retweetData : postData;
+
     const profile = await axios.get('/session')
         .then(function (response) {
             return response
         })
-    // var timestamp = moment(date).endOf('day').fromNow();
+
+
+     const isRetweet =   post.retweetby.includes(profile.data.id)
     let timestamp = timeDifference(new Date(), new Date(post.datetime))
 
     let likeButtonActiveClass = post.likes.includes(profile.data.id) ? "active" : "";
+    var retweetButtonActiveClass = post.retweetby.includes(profile.data.id) ? "active" : "";
+
+    var retweetText = '';
+    if(isRetweet) {
+        retweetText = `<span>
+                        <i class='fas fa-retweet'></i>
+                        Retweeted by <a href='/profile/${profile.data.id}'>you</a>    
+                    </span>`
+    }
 
     let body = `<div class='post' data-id=${post.status_id}>
-
+    <div class='postActionContainer'>
+    ${retweetText}
+       </div>
   <div class='mainContentContainer'>
       <div class='userImage'>
           <img src='${profile.data.profilepic}'>
       </div>
       <div class='postContentContainer'>
           <div class='header'>
-          <a href='/profile/${profile.data.username}' class='displayName'>@${profile.data.username}</a>
+          <a href='/profile/${post.username}' class='displayName'>@${post.username}</a>
           <span class="date">${timestamp}</span>
           </div>
           <div class='postBody'>
@@ -68,11 +85,12 @@ const createPostHtml = async (post) => {
               </button>
           </div>
           <div class='postButtonContainer green'>
-              <button class="retweet">
+              <button class="${retweetButtonActiveClass}"  onclick='retweetButton(this)'>
                   <i class='fas fa-retweet'></i>
+                  <span class='retweetSpan'>${post.retweetby.length > 0 ? post.retweetby.length :''}</span>
               </button>
           </div>
-          <div class='postButtonContainer' >
+          <div class='postButtonContainer red' >
               <button class="${likeButtonActiveClass}" onclick='likeButton(this)'>
                   <i class='far fa-heart'></i>
                   <span class='likeSpan'>${post.likes.length > 0 ? post.likes.length :''}</span>
@@ -116,4 +134,3 @@ function timeDifference(current, previous) {
         return Math.round(elapsed / msPerYear) + ' years ago';
     }
 }
-

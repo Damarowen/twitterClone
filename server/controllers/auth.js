@@ -9,31 +9,40 @@ class Message {
 }
 
 
-//**RENDER NEW KOST
-//** @route  /kost/new
-//** @access  Private
+//**RENDER login page
+//** @route  /login
+//** @access  public
 
 const LoginPage = async (req, res) => {
   try {
-    let message = new Message('')
-    res.status(200).render('auth/login', message)
+    res.status(200).render('auth/login')
   } catch (err) {
     console.error(err.message);
     return res.status(500).send(' something error')
 
   }
 };
+
+
+//**RENDER register page
+//** @route  /register
+//** @access  public
 
 const RegisterPage = async (req, res) => {
   try {
-    let message = new Message('')
-    res.status(200).render('auth/register', message)
+    res.status(200).render('auth/register')
   } catch (err) {
     console.error(err.message);
     return res.status(500).send(' something error')
 
   }
 };
+
+
+
+//**POST REGISTER
+//** @route  /register
+//** @access  public
 
 const Register = async (req, res) => {
   try {
@@ -81,8 +90,8 @@ const Register = async (req, res) => {
     // if (username && email && password && confirmpassword) {
     //   return res.redirect('/')
     // } else {
-    //   payload.message = "Make sure each field has a valid value.";
-    //   res.status(200).render("auth/register", payload);
+    //   let message = new Message("Username Already Exist")
+    //    res.status(401).render("auth/register", message);
     // }
   } catch (err) {
     console.error(err.message);
@@ -90,6 +99,11 @@ const Register = async (req, res) => {
 
   }
 };
+
+
+//**POST LOGIN
+//** @route  /login
+//** @access  public
 
 const Login = async (req, res) => {
   try {
@@ -111,17 +125,17 @@ const Login = async (req, res) => {
     //* 3 check if incoming pass same to the db pass
 
     const validPassword = await bcrypt.compare(password, user.rows[0].password);
-    console.log(validPassword)
 
     if (!validPassword) {
       let message = new Message('Password incorect')
+      console.log('valid', validPassword)
       return res.status(401).render('auth/login', message)
     }
-
+    console.log('valid', validPassword)
     //*4. give login user session
 
-     req.session.user = user.rows[0];
-     return res.redirect('/')
+    req.session.user = user.rows[0];
+    return res.redirect('/')
 
   } catch (err) {
     console.error(err.message);
@@ -130,16 +144,20 @@ const Login = async (req, res) => {
   }
 };
 
+
+//**GET LOGOUT
+//** @route  /logout
+//** @access  private
+
 const Logout = async (req, res) => {
   try {
-    
+
     // req.session.destroy(() => {
     //   res.redirect('/login')
     // })
     req.session = null
     res.redirect('/login')
 
-   
 
   } catch (err) {
     console.error(err.message);

@@ -3,8 +3,12 @@
     <div class="wrapper">
         <div class="loginContainer">
             <h1>Register</h1>
-            <p><%= message %> </p> 
-            <form id="formRegister" method="POST" action="/register" onsubmit="validatePassword()">
+            <% if(typeof message == 'string')  {%>  
+              <%= message %>  
+             <% } else { %> 
+               <% message = ''   %>  
+               <% }  %> 
+               <form id="formRegister" method="POST" action="/register" onsubmit="validatePassword()">
                 <div class="form-group">
                   <input type="text" class="form-control my-2" id="username" name="username" placeholder="Username" required>
                 </div>

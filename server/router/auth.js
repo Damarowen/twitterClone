@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-
+//*middleware
 const requireLogin = require('../middleware/requireLogin')
 
 const {
-  Home, Session, Posting, SeePosting, Likes
+  Home, Session, Posting, SeePosting, Likes, Retweet
 } = require('../controllers/home');
 
 const {
@@ -25,6 +25,7 @@ router.get('/session', Session)
 router.get('/see_posting', SeePosting)
 router.post('/posting', Posting )
 router.put('/:id/like', Likes )
+router.post('/:id/retweet', Retweet )
 
 
 router.get('/login', LoginPage).post('/login', Login);

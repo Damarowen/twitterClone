@@ -6,14 +6,15 @@
     --lightGrey: rgb(230, 236, 240);
     --spacing: 15px;
     --greyText: rgb(101, 119, 134);
-    --greyButtonText: rgba(0,0,0,0.34);
-    --red: rgb(226,34,94);
-    --redBackground: rgba(226,34,94,0.1);
-    --green: rgb(23,191,99);
-    --greenBackground: rgba(23,191,99,0.1);
+    --greyButtonText: rgba(0, 0, 0, 0.34);
+    --red: rgb(226, 34, 94);
+    --redBackground: rgba(226, 34, 94, 0.1);
+    --green: rgb(23, 191, 99);
+    --greenBackground: rgba(23, 191, 99, 0.1);
 }
 
-html, body {
+html,
+body {
     height: 100%;
     min-height: 100%;
     background-color: #fff;
@@ -34,7 +35,7 @@ button {
 }
 
 .mainSection {
-    padding:  0;
+    padding: 0;
     border-left: 1px solid var(--lightGrey);
     border-right: 1px solid var(--lightGrey);
     display: flex;
@@ -50,15 +51,33 @@ button {
     padding-right: 5px;
 }
 
-.postButtonContainer button:hover {
+
+
+.postActionContainer {
+    padding-left: 35px;
+    font-size: 13px;
+    color: var(--greyText);
+    margin-bottom: 5px;
+}
+
+.postButtonContainer.red button:hover {
     background-color: #d4edff;
     color: var(--blue);
     border-radius: 50%;
 }
 
 
-.postButtonContainer button.active {
+.postButtonContainer.red button.active {
     color: var(--red);
+}
+
+.postButtonContainer.green button.active {
+    color: var(--green);
+}
+
+.postButtonContainer.green button:hover {
+    color: var(--green);
+    background-color: var(--greenBackground)
 }
 
 .mainContentContainer {
@@ -127,15 +146,16 @@ button {
     border: 1px solid #dedede;
     background-color: #fff;
     text-align: center;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-    -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-    -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .postBody {
     display: flex;
 
 }
+
 .postFormContainer {
     display: flex;
     padding: var(--spacing);
@@ -170,7 +190,7 @@ textarea {
 
 textarea:focus {
     outline: none !important;
-    border:1px solid var(--blue);
+    border: 1px solid var(--blue);
 }
 
 #submitPostButton {
