@@ -1,7 +1,14 @@
+//*modal */
+const REPLYpostButton = document.getElementById('submitReplyButton')
+const REPLYTextarea = document.getElementById('replyTextArea')
+
 const textArea = document.getElementById('domTextArea')
 const POSTbutton = document.getElementById('submitPostButton')
 const postContainer = document.getElementById('postContainer')
 const div = document.createElement('div')
+
+
+REPLYpostButton.disabled = true;
 POSTbutton.disabled = true;
 
 //* event listener for button disabled
@@ -9,6 +16,14 @@ textArea.addEventListener('keyup', (e) => {
     const val = e.target.value
     if (val.length > 0) {
         POSTbutton.disabled = false;
+        return
+    }
+})
+
+REPLYTextarea.addEventListener('keyup', (e) => {
+    const val = e.target.value
+    if (val.length > 0) {
+        REPLYpostButton.disabled = false;
         return
     }
 })
@@ -80,9 +95,9 @@ const createPostHtml = async (post) => {
           </div>
           <div class='postFooter'>
           <div class='postButtonContainer'>
-              <button>
-                  <i class='far fa-comment'></i>
-              </button>
+          <button data-toggle='modal' data-target='#replyModal' id='modalShow'>
+          <i class='far fa-comment'></i>
+      </button>
           </div>
           <div class='postButtonContainer green'>
               <button class="${retweetButtonActiveClass}"  onclick='retweetButton(this)'>
@@ -134,3 +149,4 @@ function timeDifference(current, previous) {
         return Math.round(elapsed / msPerYear) + ' years ago';
     }
 }
+

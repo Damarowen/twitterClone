@@ -1,3 +1,16 @@
+const replyModal = document.getElementById('modalShow')
+
+
+	
+
+
+
+replyModal.addEventListener('click', function (event) {
+   console.log('im open')
+
+});
+
+
 document.addEventListener("DOMContentLoaded", function (event) {
     let data = axios.get('/see_posting')
     data.then(async res => {
