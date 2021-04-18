@@ -23,13 +23,18 @@ CREATE TABLE status(
     text VARCHAR(255),
     likes text [] DEFAULT '{}',
     retweetby text [] DEFAULT '{}',
+    reply_by UUID,
     datetime timestamp NOT NULL DEFAULT NOW(),
      PRIMARY KEY (status_id),
      FOREIGN KEY (user_id) REFERENCES users(id),
      FOREIGN KEY (username) REFERENCES users(username)
+     FOREIGN KEY (reply_by) REFERENCES users(id)
 
 )
 
+alter table status
+add column reply_by UUID
+REFERENCES users(id)
 
 INSERT INTO users (username, email, password ) VALUES ('Owen', 'tes@gmail.com', 'pass')
 INSERT INTO status (user_id,  text) values ('b429c2ce-0e53-49f0-9669-eb8951ce3ff0', 'clean room')

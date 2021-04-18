@@ -1,6 +1,8 @@
 //*modal */
 const REPLYpostButton = document.getElementById('submitReplyButton')
 const REPLYTextarea = document.getElementById('replyTextArea')
+const originalPost = document.getElementById('originalPost')
+
 
 const textArea = document.getElementById('domTextArea')
 const POSTbutton = document.getElementById('submitPostButton')
@@ -11,29 +13,28 @@ const div = document.createElement('div')
 REPLYpostButton.disabled = true;
 POSTbutton.disabled = true;
 
-//* event listener for button disabled
-textArea.addEventListener('keyup', (e) => {
-    const val = e.target.value
-    if (val.length > 0) {
-        POSTbutton.disabled = false;
-        return
-    }
-})
 
-REPLYTextarea.addEventListener('keyup', (e) => {
+//* helper
+const getTextHandler = (e) => {
     const val = e.target.value
     if (val.length > 0) {
-        REPLYpostButton.disabled = false;
-        return
+       return [POSTbutton.disabled = false, REPLYpostButton.disabled = false]
     }
-})
+    return [POSTbutton.disabled = true, REPLYpostButton.disabled = true]
+
+}
+
+
+
+//* event listener for button disabled
+textArea.addEventListener('keyup', getTextHandler)
+REPLYTextarea.addEventListener('keyup', getTextHandler)
 
 //* event listener for button click
 
 POSTbutton.addEventListener('click', async (e) => {
 
     e.preventDefault()
-
 
     const query = await axios.post('/posting', {
         textArea: textArea.value
@@ -53,24 +54,25 @@ POSTbutton.addEventListener('click', async (e) => {
 //* function to passing html when user click post button
 const createPostHtml = async (post) => {
 
-
-    // var retweetedBy = isRetweet ? postData.postedBy.username : null;
-    // postData = isRetweet ? postData.retweetData : postData;
-
     const profile = await axios.get('/session')
         .then(function (response) {
             return response
         })
 
+    //* check if user already retweet
+    const isRetweet = post.retweetby.includes(profile.data.id)
 
-     const isRetweet =   post.retweetby.includes(profile.data.id)
+    //*create timestamp
     let timestamp = timeDifference(new Date(), new Date(post.datetime))
-
+    //* display like button after rendering
     let likeButtonActiveClass = post.likes.includes(profile.data.id) ? "active" : "";
+    //* display rt button after rendering
     var retweetButtonActiveClass = post.retweetby.includes(profile.data.id) ? "active" : "";
 
     var retweetText = '';
-    if(isRetweet) {
+
+    //* add html retweet if user retweet
+    if (isRetweet) {
         retweetText = `<span>
                         <i class='fas fa-retweet'></i>
                         Retweeted by <a href='/profile/${profile.data.id}'>you</a>    
@@ -81,7 +83,7 @@ const createPostHtml = async (post) => {
     <div class='postActionContainer'>
     ${retweetText}
        </div>
-  <div class='mainContentContainer'>
+       <div class='mainContentContainer'>
       <div class='userImage'>
           <img src='${profile.data.profilepic}'>
       </div>
@@ -95,7 +97,7 @@ const createPostHtml = async (post) => {
           </div>
           <div class='postFooter'>
           <div class='postButtonContainer'>
-          <button data-toggle='modal' data-target='#replyModal' id='modalShow'>
+          <button data-toggle='modal' data-target='#replyModal' onclick='showModal(this)'>
           <i class='far fa-comment'></i>
       </button>
           </div>
@@ -116,8 +118,7 @@ const createPostHtml = async (post) => {
   </div>
 </div>`
 
-    return body;
-
+return body;
 
 }
 
@@ -149,4 +150,3 @@ function timeDifference(current, previous) {
         return Math.round(elapsed / msPerYear) + ' years ago';
     }
 }
-

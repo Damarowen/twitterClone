@@ -63,11 +63,20 @@ const Posting = async (req, res) => {
 const SeePosting = async (req, res) => {
 
   try {
-    const data = req.session.user.id
 
+    const postId = req.query.ID
+
+    //* using this for rendering 1 post for reply
+    if (req.query.ID) {
+      let query = await pool.query(`SELECT * FROM status WHERE status_id = $1`, [postId])
+      res.status(200).send(query.rows[0])
+    }
+
+    //* using this for rendering all postX
     let allPosting = await pool.query(
       " SELECT * FROM status ORDER BY datetime"
     );
+
     res.send(allPosting)
   } catch (error) {
     console.log(error)
@@ -145,7 +154,7 @@ const Retweet = async (req, res) => {
     //* check if user already rewteets
     let query = await pool.query(`SELECT retweets FROM users WHERE id = $1`, [userId])
     const isRetweet = query.rows[0].retweets.includes(parseInt(postId))
- 
+
 
     if (isRetweet) {
       //* pull like
@@ -187,7 +196,26 @@ const Retweet = async (req, res) => {
   }
 }
 
+//**POST RETWEET BUTTON
+//** @route  /:ID/RETWEET
+//** @access  private
+const Reply = async (req, res) => {
 
+  try {
+    let postId = req.params.id;
+    let userId = req.session.user.id
+
+    //* check if user already rewteets
+    // let query = await pool.query(`SELECT * FROM status WHERE status_id = $1`, [postId])
+    // res.status(200).send(query.rows[0])
+    await pool.query(
+      `UPDATE reply_by SET = array_append(reply_by, '${userId}') WHERE status_id = '${postId}'`
+    )
+    console.log(query)
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 
 module.exports = {
@@ -196,5 +224,6 @@ module.exports = {
   Posting,
   SeePosting,
   Likes,
-  Retweet
+  Retweet,
+  Reply
 }

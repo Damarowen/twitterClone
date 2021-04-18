@@ -60,6 +60,7 @@ button {
     margin-bottom: 5px;
 }
 
+
 .postButtonContainer.red button:hover {
     background-color: #d4edff;
     color: var(--blue);
