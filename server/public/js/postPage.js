@@ -1,69 +1,30 @@
-//*modal */
-const REPLYpostButton = document.getElementById('submitReplyButton')
-const REPLYTextarea = document.getElementById('replyTextArea')
-const originalPost = document.getElementById('originalPost')
+document.addEventListener("DOMContentLoaded", function (event) {
+    //* render all posting
+    let statusId = document.getElementById('postContainer').getAttribute('data-id')
 
-const textArea = document.getElementById('domTextArea')
-const POSTbutton = document.getElementById('submitPostButton')
-const postContainer = document.getElementById('postContainer')
-const div = document.createElement('div')
+    let data = axios.get(`/see_posting`, {
+        params: {
+            ID: statusId
+        }
+    })
+    data.then(async res => {
+        console.log(res.data)
+        await displayPost(res.data, postContainer)
+    })
 
+});
 
-REPLYpostButton.disabled = true;
-POSTbutton.disabled = true;
-
-//* JQUERY for get single post
-$(document).on("click", ".post", (e) => {
-    var element = $(e.target);
-    var statusId = element.closest('.post').data().id
-
-    if (element.is(".fas") || element.is('.far')) {
-       e.preventDefault()
-    } else {
-        window.location.href = `/post/${statusId}`
+const displayPost = async (data, container) => {
+    //* solution for data is not a function because is singular
+    if (!Array.isArray(data)) {
+        data = [data]
     }
-})
 
-
-
-//* helper
-const getTextHandler = (e) => {
-    const val = e.target.value
-    if (val.length > 0) {
-        return [POSTbutton.disabled = false, REPLYpostButton.disabled = false]
-    }
-    return [POSTbutton.disabled = true, REPLYpostButton.disabled = true]
+        let html = await createPostHtml(data[0])
+        container.insertAdjacentHTML('afterbegin', html);
 
 }
 
-
-
-//* event listener for button disabled
-textArea.addEventListener('keyup', getTextHandler) 
-REPLYTextarea.addEventListener('keyup', getTextHandler)
-
-//* event listener for button click
-
-POSTbutton.addEventListener('click', async (e) => {
-
-    e.preventDefault()
-
-    const query = await axios.post('/posting', {
-        textArea: textArea.value
-    })
-    const data = query.data.rows[0]
-
-    let html = await createPostHtml(data);
-    postContainer.insertAdjacentHTML('afterbegin', html);
-
-    textArea.value = ''
-    POSTbutton.disabled = true;
-
-})
-
-
-
-//* function to passing html when user click post button
 let createPostHtml = async (post) => {
 
     const profile = await axios.get('/session')

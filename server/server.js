@@ -28,9 +28,11 @@ app.use(session(sessionConfig))
 
 //* route files
 
-const auth = require('./router/auth');
+const auth = require('./router/auth..router');
 app.use('/' , auth)
 
+const home = require('./router/home.router');
+app.use('/' , home)
 
 app.listen(PORT, () => console.log(`Listening on port: ${PORT}`))
 

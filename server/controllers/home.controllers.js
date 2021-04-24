@@ -33,8 +33,6 @@ const Session = async (req, res) => {
 }
 
 
-
-
 //**POST POSTING
 //** @route  /posting
 //** @access  private
@@ -57,7 +55,29 @@ const Posting = async (req, res) => {
 }
 
 
-//**GET POSTING
+//**GET SINGLE POSTING
+//** @route  /post/ID
+//** @access  PUBLIC
+
+const SinglePostingPage = async (req, res) => {
+
+  try {
+    var payload = {
+      pageTitle: "View Post",
+      userLoggedIn: req.session.user.username,
+      userImage: req.session.user.profilepic,
+      postId: req.params.id,
+      data: [{name: 'damar', age: 12}, {name: 'seno', age: 12}]
+    }
+    res.status(200).render("postPage", payload);
+  } catch (error) {
+    console.log(error)
+    return res.redirect('/')
+  }
+}
+
+
+//**GET ALL POSTING
 //** @route  /see_posting
 //** @access  private
 const SeePosting = async (req, res) => {
@@ -69,15 +89,18 @@ const SeePosting = async (req, res) => {
     //* using this for rendering 1 post for reply
     if (req.query.ID) {
       let query = await pool.query(`SELECT * FROM status WHERE status_id = $1`, [postId])
-      res.status(200).send(query.rows[0])
+      return res.status(200).send(query.rows[0])
+    } else {
+
+      //* using this for rendering all postX
+      let allPosting = await pool.query(
+        " SELECT * FROM status ORDER BY datetime"
+      );
+
+      return res.send(allPosting)
     }
 
-    //* using this for rendering all postX
-    let allPosting = await pool.query(
-      " SELECT * FROM status ORDER BY datetime"
-    );
 
-    res.send(allPosting)
   } catch (error) {
     console.log(error)
   }
@@ -204,14 +227,21 @@ const Reply = async (req, res) => {
   try {
     let postId = req.params.id;
     let userId = req.session.user.id
+    let {
+      textArea
+    } = req.body
 
-    //* check if user already rewteets
-    // let query = await pool.query(`SELECT * FROM status WHERE status_id = $1`, [postId])
-    // res.status(200).send(query.rows[0])
-    await pool.query(
-      `UPDATE reply_by SET = array_append(reply_by, '${userId}') WHERE status_id = '${postId}'`
-    )
-    console.log(query)
+    //*find username
+    let usernames = await pool.query(`SELECT username FROM status WHERE status_id = $1`, [postId])
+
+    let posting = await pool.query(
+      "INSERT INTO status (user_id,  username, text, replyto) VALUES ($1, $2,$3, $4) RETURNING *",
+      [userId, req.session.user.username, textArea, [postId, usernames.rows[0].username]]
+    );
+
+    res.status(200).send(posting)
+
+
   } catch (err) {
     console.error(err)
   }
@@ -222,6 +252,7 @@ module.exports = {
   Home,
   Session,
   Posting,
+  SinglePostingPage,
   SeePosting,
   Likes,
   Retweet,

@@ -23,13 +23,11 @@ CREATE TABLE status(
     text VARCHAR(255),
     likes text [] DEFAULT '{}',
     retweetby text [] DEFAULT '{}',
-    reply_by UUID,
+    replyto VARCHAR(255) [] DEFAULT '{}',
     datetime timestamp NOT NULL DEFAULT NOW(),
      PRIMARY KEY (status_id),
      FOREIGN KEY (user_id) REFERENCES users(id),
      FOREIGN KEY (username) REFERENCES users(username)
-     FOREIGN KEY (reply_by) REFERENCES users(id)
-
 )
 
 alter table status

@@ -12,27 +12,20 @@
 
     </nav>
     <div class="mainSection col-10 col-md-8 col-lg-6">
+        
         <div class="titleContainer">
-            <h1>Home</h1>
-        </div>
-        <h1><%= userLoggedIn %> </h1>
-        <div class="postFormContainer">
-            <form>
-                <div class="postBody">
-                    <div class="userImage">
-                        <img src="<%=userImage%>" alt="User's profile picture">
-                    </div>
-                    <textarea id="domTextArea" cols="50" placeholder="What Happening" name="textArea"></textarea>
-                </div>
-                <div class="buttonsContainer">
-                    <button type="submit" id="submitPostButton">Post</button>
-                </div>
-            </form>
-        </div>
-        <div id="postContainer">
-
+            <h1><%= pageTitle %></h1>
         </div>
 
+        <div id="postContainer" data-id='<%= postId %>'>
+        </div>
+
+
+        <% data.map(x => {  %>
+         <h1><%=  x.name %> </h1>
+         <h1><%=  x.age %> </h1>
+
+        <% }) %>
     </div>
 
 
@@ -42,7 +35,7 @@
 </div>
 
 
-<div  id="replyModal" class="modal fade"  tabindex="-1" role="dialog" aria-labelledby="replyModalLabel"
+<div id="replyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -65,13 +58,15 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearModal(this)">Close</button>
-                <button type="button" class="btn btn-primary" id='submitReplyButton' onclick="submitReply(this)">Reply</button>
+                <button type="button" class="btn btn-primary" id=' submitReplyButton'
+                            onclick="submitReply(this)">Reply</button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
 
-        <script src="/js/home.js"></script>
+    <script src="/js/postPage.js"></script>
 
-        <%- include ('./partials/footer')  %>
+    <%- include ('./partials/footer')  %>
