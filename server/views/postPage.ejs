@@ -12,20 +12,160 @@
 
     </nav>
     <div class="mainSection col-10 col-md-8 col-lg-6">
-        
+
         <div class="titleContainer">
-            <h1><%= pageTitle %></h1>
+            <h1>View Post</h1>
         </div>
 
         <div id="postContainer" data-id='<%= postId %>'>
+
+            <% if(isReply)  { %>
+
+            <% buntut.rows.map(item => {   %>
+
+            <div class='post' data-id='<%= item.status_id %>'>
+                <div class='postActionContainer'>
+                    retweetText
+
+                </div>
+                <div class='mainContentContainer'>
+                    <div class='userImage'>
+                        <img src='<%= userImage %>'>
+                    </div>
+                    <div class='postContentContainer'>
+                        <div class='header'>
+                            <a href='/profile/<%=  item.username %> ' class='displayName'>@<%= item.username %></a>
+                            <span class="date"><%= timestampOne %> </span>
+                        </div>
+                        <div class='postBody'>
+                            <span><%= item.text  %> </span>
+                        </div>
+                        <div class='postFooter'>
+                            <div class='postButtonContainer'>
+                                <button data-toggle='modal' data-target='#replyModal' onclick='showModal(this)'>
+                                    <i class='far fa-comment'></i>
+                                </button>
+                            </div>
+                            <div class='postButtonContainer green'>
+                                <button onclick='retweetButton(this)'>
+                                    <i class='fas fa-retweet'></i>
+                                    <span
+                                        class='retweetSpan'><%= item.retweetby.length > 0 ? item.retweetby.length : null %></span>
+                                </button>
+                            </div>
+                            <div class='postButtonContainer red'>
+                                <button onclick='likeButton(this)'>
+                                    <i class='far fa-heart'></i>
+                                    <span
+                                        class='likeSpan'><%= item.likes.length > 0 ? item.likes.length : null %></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%  })} %>
+
+            <!--*original post -->
+            <div class='post' data-id='<%= postId %>'>
+                <div class='postActionContainer'>
+                    <% if(isRetweetOne)  { %>
+                    <%-  retweetText %>
+                    <% } %>
+                </div>
+                <div class='mainContentContainer'>
+                    <div class='userImage'>
+                        <img src='<%= userImage %>'>
+                    </div>
+                    <div class='postContentContainer'>
+                        <div class='header'>
+                            <a href='/profile/<%=  data.rows[0].username %> '
+                                class='displayName'>@<%= data.rows[0].username %></a>
+                            <span class="date"><%= timestampOne %></span>
+                        </div>
+                        <%- data.rows[0].replyto.length > 0 ? replyFlag : null %>
+                        <div class='postBody'>
+                            <span><%= data.rows[0].text  %> </span>
+                        </div>
+                        <div class='postFooter'>
+                            <div class='postButtonContainer'>
+                                <button data-toggle='modal' data-target='#replyModal' onclick='showModal(this)'>
+                                    <i class='far fa-comment'></i>
+                                </button>
+                            </div>
+                            <div class='postButtonContainer green'>
+                                <button onclick='retweetButton(this)'>
+                                    <i class='fas fa-retweet'></i>
+                                    <span
+                                        class='retweetSpan'><%= data.rows[0].retweetby.length > 0 ? data.rows[0].retweetby.length : null %></span>
+                                </button>
+                            </div>
+                            <div class='postButtonContainer red'>
+                                <button onclick='likeButton(this)'>
+                                    <i class='far fa-heart'></i>
+                                    <span
+                                        class='likeSpan'><%= data.rows[0].likes.length > 0 ? data.rows[0].likes.length : null %></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <% kepala.rows.map(item => {   %>
+
+            <div class='post' data-id='<%= item.status_id %>'>
+                <div class='postActionContainer'>
+                    retweetText
+                </div>
+                <div class='mainContentContainer'>
+                    <div class='userImage'>
+                        <img src='<%= userImage %>'>
+                    </div>
+                    <div class='postContentContainer'>
+                        <div class='header'>
+                            <a href='/profile/<%=  item.username %> ' class='displayName'>@<%= item.username %></a>
+                            <span class="date">date </span>
+                        </div>
+                        <%- replyFlag  %>
+                        <div class='postBody'>
+                            <span><%= item.text  %> </span>
+                        </div>
+                        <div class='postFooter'>
+                            <div class='postButtonContainer'>
+                                <button data-toggle='modal' data-target='#replyModal' onclick='showModal(this)'>
+                                    <i class='far fa-comment'></i>
+                                </button>
+                            </div>
+                            <div class='postButtonContainer green'>
+                                <button onclick='retweetButton(this)'>
+                                    <i class='fas fa-retweet'></i>
+                                    <span
+                                        class='retweetSpan'><%= item.retweetby.length > 0 ? item.retweetby.length : null %></span>
+                                </button>
+                            </div>
+                            <div class='postButtonContainer red'>
+                                <button onclick='likeButton(this)'>
+                                    <i class='far fa-heart'></i>
+                                    <span
+                                        class='likeSpan'><%= item.likes.length > 0 ? item.likes.length : null %></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%  }) %>
+
         </div>
 
 
-        <% data.map(x => {  %>
-         <h1><%=  x.name %> </h1>
-         <h1><%=  x.age %> </h1>
 
-        <% }) %>
     </div>
 
 
@@ -47,6 +187,7 @@
             </div>
             <div class="modal-body">
                 <div id="originalPost">
+
                 </div>
                 <div class='postFormContainer'>
                     <div class='userImage'>
@@ -67,6 +208,5 @@
     </div>
 
 
-    <script src="/js/postPage.js"></script>
-
-    <%- include ('./partials/footer')  %>
+   <script src='/js/postPage.js'></script>
+    <%- include ('./partials/footer.ejs')  %>

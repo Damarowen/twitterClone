@@ -1,7 +1,6 @@
 //*modal */
 const REPLYpostButton = document.getElementById('submitReplyButton')
 const REPLYTextarea = document.getElementById('replyTextArea')
-const originalPost = document.getElementById('originalPost')
 
 const textArea = document.getElementById('domTextArea')
 const POSTbutton = document.getElementById('submitPostButton')
@@ -18,7 +17,7 @@ $(document).on("click", ".post", (e) => {
     var statusId = element.closest('.post').data().id
 
     if (element.is(".fas") || element.is('.far')) {
-       e.preventDefault()
+        e.preventDefault()
     } else {
         window.location.href = `/post/${statusId}`
     }
@@ -39,10 +38,19 @@ const getTextHandler = (e) => {
 
 
 //* event listener for button disabled
-textArea.addEventListener('keyup', getTextHandler) 
+textArea.addEventListener('keyup', getTextHandler)
 REPLYTextarea.addEventListener('keyup', getTextHandler)
 
 //* event listener for button click
+
+
+const originalPost = document.getElementById('originalPost')
+
+
+
+
+
+
 
 POSTbutton.addEventListener('click', async (e) => {
 
@@ -96,7 +104,7 @@ let createPostHtml = async (post) => {
 
     var replyFlag = "";
     if (isReply) {
-        replyFlag = `<div class='replyFlag'>
+        replyFlag = `<div class='replyFlag' data-id='${post.replyto[0]}'>
         Replying to <a href='/profile/${profile.data.id}'>@${post.replyto[1]}<a>
     </div>`;
     }
@@ -146,6 +154,126 @@ let createPostHtml = async (post) => {
 
 }
 
+
+
+
+const showModal = (e) => {
+    const statusId = e.closest('.post').getAttribute('data-id')
+    console.log('statusid', statusId)
+    let data = axios.get('/see_posting', {
+        params: {
+            ID: statusId
+        }
+    })
+    console.log('original', originalPost)
+    data.then(async res => {
+        await displayPost(res.data, originalPost)
+    })
+
+
+}
+
+
+const clearModal = (e) => {
+    const text = e.closest('#replyModal').querySelector('#replyTextArea')
+    text.value = ''
+    originalPost.innerHTML = ''
+}
+
+
+
+const submitReply = (e) => {
+    const statusId = e.closest('#replyModal').querySelector('.post').getAttribute('data-id')
+    const text = e.closest('#replyModal').querySelector('#replyTextArea')
+
+    let data = axios.post(`/post/${statusId}`, {
+        textArea: text.value
+    })
+    data.then(async res => {
+        console.log('from submit', res)
+    })
+    location.reload();
+
+
+}
+
+
+const likeButton = (e) => {
+    const statusId = e.closest('.post').getAttribute('data-id')
+    const spanLike = e.querySelector('.likeSpan')
+
+    let data = axios.put(`/${statusId}/like`)
+
+    data.then(res => {
+        //* data 1 is session user
+        const userId = res.data[1]
+        const like = res.data[0].rows[0].likes
+        spanLike.innerHTML = like.length == 0 ? '' : like.length
+
+
+        //* check if user already like than passing class
+        if (like.includes(userId)) {
+            e.classList.add("active");
+        } else {
+            e.classList.remove("active");
+        }
+    })
+
+}
+
+const retweetButton = (e) => {
+    const statusId = e.closest('.post').getAttribute('data-id')
+
+    const retweetSpan = e.querySelector('.retweetSpan')
+
+    const bodyRetweet = e.closest('.post').querySelector('.postActionContainer')
+
+    let data = axios.post(`/${statusId}/retweet`)
+    const body = `<span>
+    <i class='fas fa-retweet'></i>
+         Retweeted by <a href='/profile/$res.data[1]}'>you</a>    
+     </span>`
+    data.then(res => {
+        //* data 1 is session user
+        const userId = res.data[1]
+        const retweet = res.data[0].rows[0].retweetby
+
+        retweetSpan.innerHTML = retweet.length == 0 ? '' : retweet.length
+
+
+        // //* check if user already retweet than passing class
+        if (retweet.includes(userId)) {
+            e.classList.add("active");
+            bodyRetweet.innerHTML = body
+        } else {
+            e.classList.remove("active");
+            bodyRetweet.innerHTML = ''
+        }
+
+
+    })
+
+}
+
+
+
+
+
+let displayPost = (data, container) => {
+    //* solution for data is not a function because is singular
+    if (!Array.isArray(data)) {
+        data = [data]
+    }
+
+    data.forEach(async element => {
+        let html = await createPostHtml(element)
+        container.insertAdjacentHTML('afterbegin', html);
+
+    });
+
+  
+}
+
 //* function to retrive date like twitter 
 
 function timeDifference(current, previous) {
@@ -174,3 +302,4 @@ function timeDifference(current, previous) {
         return Math.round(elapsed / msPerYear) + ' years ago';
     }
 }
+

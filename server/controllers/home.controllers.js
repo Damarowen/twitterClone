@@ -62,12 +62,87 @@ const Posting = async (req, res) => {
 const SinglePostingPage = async (req, res) => {
 
   try {
+
+    let query = await pool.query(
+      "SELECT * FROM status WHERE status_id = $1",
+      [req.params.id]
+    );
+
+
+    let kepala = await pool.query(
+      "SELECT * FROM status WHERE replyto[1] = $1",
+      [req.params.id]
+    );
+
+
+    let buntut = await pool.query(
+      "SELECT * FROM status WHERE status_id = $1",
+      [query.rows[0].replyto[0]]
+    );
+
+
+
+
+    let timestampOne = timeDifference(new Date(), new Date(query.rows[0].datetime))
+
+    // let timestampTwo;
+    // if (buntut.rows.length === 0) {
+    //   timestampTwo = timeDifference(new Date(), new Date(kepala.rows[0].datetime))
+    // }
+    // if (kepala.rows.length === 0) {
+    //   let datetime = buntut.rows.map(x => new Date(x.datetime))
+    //   timestampTwo = timeDifference(new Date(), datetime)
+    // }
+
+
+
+    //* check if user already retweet
+    const isRetweetOne = query.rows[0].retweetby.includes(req.session.user.id)
+    // const isRetweetTwo = buntut.rows[0].retweetby.includes(req.session.user.id)
+    // const isRetweetThree = kepala.rows[0].retweetby.includes(req.session.user.id)
+
+
+    let retweetText = '';
+
+    //* add html retweet if user retweet
+    retweetText = `<span>
+                        <i class='fas fa-retweet'></i>
+                        Retweeted by <a href='/profile/${query.rows[0].id}'>you</a>    
+                    </span>`
+
+
+
+    //*check if user reply
+    const isReply = query.rows[0].replyto.length > 0
+    const isReplyTwo = kepala.rows.map(x => x.replyto[1])
+
+    var replyFlag = "";
+   
+    if (isReply) {
+      replyFlag = `<div class='replyFlag' data-id='${query.rows[0].replyto[0]}'>
+         Replying to <a href='/profile/${query.rows[0].id}'>@${query.rows[0].replyto[1]}<a>
+     </div>`;
+    } 
+    if(kepala.rows.length > 0) {
+      replyFlag = `<div class='replyFlag' data-id=''>
+      Replying to <a href='/profile/'>@${query.rows[0].username} <a>
+  </div>`
+    }
+    
+    
+
     var payload = {
-      pageTitle: "View Post",
       userLoggedIn: req.session.user.username,
       userImage: req.session.user.profilepic,
       postId: req.params.id,
-      data: [{name: 'damar', age: 12}, {name: 'seno', age: 12}]
+      data: query,
+      timestampOne,
+      retweetText,
+      replyFlag,
+      isReply,
+      isRetweetOne,
+      kepala,
+      buntut
     }
     res.status(200).render("postPage", payload);
   } catch (error) {
@@ -247,6 +322,33 @@ const Reply = async (req, res) => {
   }
 }
 
+
+function timeDifference(current, previous) {
+
+  var msPerMinute = 60 * 1000;
+  var msPerHour = msPerMinute * 60;
+  var msPerDay = msPerHour * 24;
+  var msPerMonth = msPerDay * 30;
+  var msPerYear = msPerDay * 365;
+
+  var elapsed = current - previous;
+
+  if (elapsed < msPerMinute) {
+    if (elapsed / 1000 < 30) return "Just now";
+
+    return Math.round(elapsed / 1000) + ' seconds ago';
+  } else if (elapsed < msPerHour) {
+    return Math.round(elapsed / msPerMinute) + ' minutes ago';
+  } else if (elapsed < msPerDay) {
+    return Math.round(elapsed / msPerHour) + ' hours ago';
+  } else if (elapsed < msPerMonth) {
+    return Math.round(elapsed / msPerDay) + ' days ago';
+  } else if (elapsed < msPerYear) {
+    return Math.round(elapsed / msPerMonth) + ' months ago';
+  } else {
+    return Math.round(elapsed / msPerYear) + ' years ago';
+  }
+}
 
 module.exports = {
   Home,
